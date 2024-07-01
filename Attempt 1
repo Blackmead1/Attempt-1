@@ -1,0 +1,32 @@
+-- Function to simulate a fling effect on a player
+local function flingPlayer(player)
+    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local character = player.Character
+        local rootPart = character.HumanoidRootPart
+        local flingDirection = rootPart.CFrame.UpVector * 5000 -- Adjust force as needed
+        
+        -- Apply force to the humanoid
+        character:Move(Vector3.new()) -- Stop current movement
+        character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Physics)
+        rootPart.Velocity = flingDirection
+        
+        -- Reset after a short delay
+        wait(0.5)
+        rootPart.Velocity = Vector3.new(0, 0, 0)
+        character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Seated)
+    end
+end
+
+-- Function to fling all players in the game
+local function flingAllPlayers()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        flingPlayer(player)
+    end
+end
+
+-- Activate flinging (for example, bind to a key press)
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.F then -- Change the key as needed
+        flingAllPlayers()
+    end
+end)
